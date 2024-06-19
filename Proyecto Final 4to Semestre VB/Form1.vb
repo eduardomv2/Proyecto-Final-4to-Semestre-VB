@@ -303,6 +303,119 @@ Namespace Proyecto_Final_4to_Semestre
         Return dataTable
     End Function
 #End Region
+#Region "BOTON PARA GUARDAR EN FORMATO YAML"
+    Private Sub btnGuardarYaml_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnGuardarYaml.Click
+        ' Obtener el DataTable desde el DataSource del DataGridView
+        Dim dataTable As DataTable = DirectCast(DataGridView.DataSource, DataTable)
+
+        ' Convertir DataTable a una lista de diccionarios para facilitar la serialización
+        Dim dataList As New List(Of Dictionary(Of String, Object))()
+        For Each row As DataRow In dataTable.Rows
+            Dim dict As New Dictionary(Of String, Object)()
+            For Each col As DataColumn In row.Table.Columns
+                dict(col.ColumnName) = row(col)
+            Next
+            dataList.Add(dict)
+        Next
+
+        ' Serializar a YAML usando YamlDotNet
+        Dim serializer = New SerializerBuilder() _
+        .WithNamingConvention(CamelCaseNamingConvention.Instance) _
+        .Build()
+
+        Dim yaml As String = serializer.Serialize(dataList)
+
+        ' Configurar SaveFileDialog
+        Dim saveFileDialog1 As New SaveFileDialog()
+        saveFileDialog1.Filter = "Archivos YAML (*.yaml)|*.yaml|Todos los archivos (*.*)|*.*"
+        saveFileDialog1.Title = "Guardar datos YAML"
+        saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+        saveFileDialog1.FileName = "spotify_songs_data.yaml"
+
+        If saveFileDialog1.ShowDialog() = DialogResult.OK Then
+            Try
+                ' Guardar el archivo YAML
+                Dim filePath As String = saveFileDialog1.FileName
+                File.WriteAllText(filePath, yaml)
+
+                MessageBox.Show("Datos guardados en formato YAML correctamente en:" & vbCrLf & filePath)
+            Catch ex As Exception
+                MessageBox.Show("Error al guardar el archivo YAML: " & ex.Message)
+            End Try
+        End If
+    End Sub
+#End Region
+
+#Region "Boton para Leer en YAML"
+    Private Sub btnLeerYAML_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnLeerYAML.Click
+        Dim openFileDialog As New OpenFileDialog()
+        openFileDialog.Filter = "Archivos YAML (*.yaml;*.yml)|*.yaml;*.yml|Todos los archivos (*.*)|*.*"
+        openFileDialog.Title = "Seleccionar archivo YAML"
+
+        If openFileDialog.ShowDialog() = DialogResult.OK Then
+            Dim filePath As String = openFileDialog.FileName
+            Dim dataTable As DataTable = LeerDesdeYAML(filePath)
+            If dataTable.Rows.Count > 0 Then
+                DataGridView.DataSource = dataTable
+            End If
+        End If
+    End Sub
+
+    Private Function LeerDesdeYAML(ByVal filePath As String) As DataTable
+        Dim dataTable As New DataTable()
+        Try
+            ' Crear un deserializador YAML
+            Dim deserializer As New Deserializer()
+
+            ' Leer el contenido del archivo YAML
+            Dim yamlContent As String = File.ReadAllText(filePath)
+
+            ' Deserializar el contenido YAML a una lista de diccionarios
+            Dim dataList As List(Of Dictionary(Of String, Object)) = deserializer.Deserialize(Of List(Of Dictionary(Of String, Object))))(yamlContent)
+
+        ' Si dataList tiene elementos
+        If dataList.Count > 0 Then
+                ' Agregar columnas al DataTable basado en las claves del primer diccionario
+                For Each key As String In dataList(0).Keys
+                    dataTable.Columns.Add(key)
+                Next
+
+                ' Agregar filas al DataTable
+                For Each data As Dictionary(Of String, Object) In dataList
+                    Dim row As DataRow = dataTable.NewRow()
+                    For Each key As String In data.Keys
+                        row(key) = If(data(key) IsNot Nothing, data(key).ToString(), Nothing) ' Convertir valores a cadena
+                    Next
+                    dataTable.Rows.Add(row)
+                Next
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error al leer archivo YAML: " & ex.Message)
+        End Try
+        Return dataTable
+    End Function
+#End Region
+
+#Region "BOTONES PARA MANEJAR EL TAMAÑO DE LA VENTANA"
+    Private Sub button1_Click_1(ByVal sender As Object, ByVal e As EventArgs) Handles button1.Click
+        ' Maximizar o normalizar la ventana
+        If WindowState = FormWindowState.Normal Then
+            WindowState = FormWindowState.Maximized
+        Else
+            WindowState = FormWindowState.Normal
+        End If
+    End Sub
+
+    Private Sub button4_Click(ByVal sender As Object, ByVal e As EventArgs) Handles button4.Click
+        ' Cerrar la ventana
+        Me.Close()
+    End Sub
+
+    Private Sub button9_Click(ByVal sender As Object, ByVal e As EventArgs) Handles button9.Click
+        ' Minimizar la ventana
+        WindowState = FormWindowState.Minimized
+    End Sub
+#End Region
 
 
 End Namespace
