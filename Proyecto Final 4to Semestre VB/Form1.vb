@@ -416,6 +416,157 @@ Namespace Proyecto_Final_4to_Semestre
         WindowState = FormWindowState.Minimized
     End Sub
 #End Region
+    Private Sub btnGuardar_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnGuardar.Click
+        Try
+            Using connection As New SqlConnection(connectionString)
+                connection.Open()
+                Dim dataAdapter As New SqlDataAdapter()
+
+                ' Configurar el comando DELETE
+                Dim deleteCommand As New SqlCommand(
+                "DELETE FROM spotify_songs WHERE track_id = @track_id", connection)
+                deleteCommand.Parameters.Add("@track_id", SqlDbType.NVarChar, 50, "track_id")
+                dataAdapter.DeleteCommand = deleteCommand
+
+                ' Configurar el comando INSERT
+                Dim insertCommand As New SqlCommand(
+                "INSERT INTO spotify_songs (track_id, track_name, track_artist, track_popularity, " &
+                "track_album_id, track_album_name, track_album_release_date, playlist_name, playlist_id, " &
+                "playlist_genre, playlist_subgenre, danceability, energy, [key], loudness, mode, speechiness, " &
+                "acousticness, instrumentalness, liveness, valence, tempo, duration_ms) " &
+                "VALUES (@track_id, @track_name, @track_artist, @track_popularity, @track_album_id, " &
+                "@track_album_name, @track_album_release_date, @playlist_name, @playlist_id, @playlist_genre, " &
+                "@playlist_subgenre, @danceability, @energy, @key, @loudness, @mode, @speechiness, " &
+                "@acousticness, @instrumentalness, @liveness, @valence, @tempo, @duration_ms); " &
+                "SELECT * FROM spotify_songs WHERE track_id = SCOPE_IDENTITY();", connection)
+                insertCommand.Parameters.Add("@track_id", SqlDbType.NVarChar, 50, "track_id").Value = DBNull.Value ' Valor generado automáticamente por la base de datos
+                insertCommand.Parameters.Add("@track_name", SqlDbType.VarChar, -1, "track_name")
+                insertCommand.Parameters.Add("@track_artist", SqlDbType.VarChar, -1, "track_artist")
+                insertCommand.Parameters.Add("@track_popularity", SqlDbType.TinyInt, 1, "track_popularity")
+                insertCommand.Parameters.Add("@track_album_id", SqlDbType.NVarChar, 50, "track_album_id")
+                insertCommand.Parameters.Add("@track_album_name", SqlDbType.VarChar, -1, "track_album_name")
+                insertCommand.Parameters.Add("@track_album_release_date", SqlDbType.DateTime2, 7, "track_album_release_date")
+                insertCommand.Parameters.Add("@playlist_name", SqlDbType.VarChar, -1, "playlist_name")
+                insertCommand.Parameters.Add("@playlist_id", SqlDbType.NVarChar, 50, "playlist_id")
+                insertCommand.Parameters.Add("@playlist_genre", SqlDbType.NVarChar, 50, "playlist_genre")
+                insertCommand.Parameters.Add("@playlist_subgenre", SqlDbType.NVarChar, 50, "playlist_subgenre")
+                insertCommand.Parameters.Add("@danceability", SqlDbType.Float, 8, "danceability")
+                insertCommand.Parameters.Add("@energy", SqlDbType.Float, 8, "energy")
+                insertCommand.Parameters.Add("@key", SqlDbType.TinyInt, 1, "key")
+                insertCommand.Parameters.Add("@loudness", SqlDbType.Float, 8, "loudness")
+                insertCommand.Parameters.Add("@mode", SqlDbType.Bit, 1, "mode")
+                insertCommand.Parameters.Add("@speechiness", SqlDbType.Float, 8, "speechiness")
+                insertCommand.Parameters.Add("@acousticness", SqlDbType.Float, 8, "acousticness")
+                insertCommand.Parameters.Add("@instrumentalness", SqlDbType.Float, 8, "instrumentalness")
+                insertCommand.Parameters.Add("@liveness", SqlDbType.Float, 8, "liveness")
+                insertCommand.Parameters.Add("@valence", SqlDbType.Float, 8, "valence")
+                insertCommand.Parameters.Add("@tempo", SqlDbType.Float, 8, "tempo")
+                insertCommand.Parameters.Add("@duration_ms", SqlDbType.Int, 4, "duration_ms")
+                dataAdapter.InsertCommand = insertCommand
+
+                ' Configurar el comando UPDATE
+                Dim updateCommand As New SqlCommand(
+                "UPDATE spotify_songs SET " &
+                "track_name = @track_name, " &
+                "track_artist = @track_artist, " &
+                "track_popularity = @track_popularity, " &
+                "track_album_id = @track_album_id, " &
+                "track_album_name = @track_album_name, " &
+                "track_album_release_date = @track_album_release_date, " &
+                "playlist_name = @playlist_name, " &
+                "playlist_id = @playlist_id, " &
+                "playlist_genre = @playlist_genre, " &
+                "playlist_subgenre = @playlist_subgenre, " &
+                "danceability = @danceability, " &
+                "energy = @energy, " &
+                "[key] = @key, " &
+                "loudness = @loudness, " &
+                "mode = @mode, " &
+                "speechiness = @speechiness, " &
+                "acousticness = @acousticness, " &
+                "instrumentalness = @instrumentalness, " &
+                "liveness = @liveness, " &
+                "valence = @valence, " &
+                "tempo = @tempo, " &
+                "duration_ms = @duration_ms " &
+                "WHERE track_id = @track_id", connection)
+                updateCommand.Parameters.Add("@track_id", SqlDbType.NVarChar, 50, "track_id")
+                updateCommand.Parameters.Add("@track_name", SqlDbType.VarChar, -1, "track_name")
+                updateCommand.Parameters.Add("@track_artist", SqlDbType.VarChar, -1, "track_artist")
+                updateCommand.Parameters.Add("@track_popularity", SqlDbType.TinyInt, 1, "track_popularity")
+                updateCommand.Parameters.Add("@track_album_id", SqlDbType.NVarChar, 50, "track_album_id")
+                updateCommand.Parameters.Add("@track_album_name", SqlDbType.VarChar, -1, "track_album_name")
+                updateCommand.Parameters.Add("@track_album_release_date", SqlDbType.DateTime2, 7, "track_album_release_date")
+                updateCommand.Parameters.Add("@playlist_name", SqlDbType.VarChar, -1, "playlist_name")
+                updateCommand.Parameters.Add("@playlist_id", SqlDbType.NVarChar, 50, "playlist_id")
+                updateCommand.Parameters.Add("@playlist_genre", SqlDbType.NVarChar, 50, "playlist_genre")
+                updateCommand.Parameters.Add("@playlist_subgenre", SqlDbType.NVarChar, 50, "playlist_subgenre")
+                updateCommand.Parameters.Add("@danceability", SqlDbType.Float, 8, "danceability")
+                updateCommand.Parameters.Add("@energy", SqlDbType.Float, 8, "energy")
+                updateCommand.Parameters.Add("@key", SqlDbType.TinyInt, 1, "key")
+                updateCommand.Parameters.Add("@loudness", SqlDbType.Float, 8, "loudness")
+                updateCommand.Parameters.Add("@mode", SqlDbType.Bit, 1, "mode")
+                updateCommand.Parameters.Add("@speechiness", SqlDbType.Float, 8, "speechiness")
+                updateCommand.Parameters.Add("@acousticness", SqlDbType.Float, 8, "acousticness")
+                updateCommand.Parameters.Add("@instrumentalness", SqlDbType.Float, 8, "instrumentalness")
+                updateCommand.Parameters.Add("@liveness", SqlDbType.Float, 8, "liveness")
+                updateCommand.Parameters.Add("@valence", SqlDbType.Float, 8, "valence")
+                updateCommand.Parameters.Add("@tempo", SqlDbType.Float, 8, "tempo")
+                updateCommand.Parameters.Add("@duration_ms", SqlDbType.Int, 4, "duration_ms")
+                dataAdapter.UpdateCommand = updateCommand
+
+                ' Actualizar la base de datos con los cambios realizados en el DataTable
+                dataAdapter.Update(DataTable)
+
+                ' Confirmación de cambios guardados
+                MessageBox.Show("Cambios guardados correctamente en la base de datos.")
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error al guardar cambios en la base de datos: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub DataGridView_UserDeletingRow(ByVal sender As Object, ByVal e As DataGridViewRowCancelEventArgs) Handles DataGridView.UserDeletingRow
+        ' Eliminar la fila de la base de datos
+        Dim rowView As DataRowView = DirectCast(e.Row.DataBoundItem, DataRowView)
+        Dim row As DataRow = rowView.Row
+        row.Delete()
+    End Sub
+
+    Private Sub DataGridView_RowValidating(ByVal sender As Object, ByVal e As DataGridViewCellCancelEventArgs) Handles DataGridView.RowValidating
+        ' Manejar la inserción o actualización de una fila en el DataGridView
+        Dim dataGridViewRow As DataGridViewRow = DataGridView.Rows(e.RowIndex)
+
+        ' Verificar si es una nueva fila o una fila existente
+        If dataGridViewRow.IsNewRow Then Return
+
+        ' Actualizar la fila en el DataTable
+        Dim rowView As DataRowView = DirectCast(dataGridViewRow.DataBoundItem, DataRowView)
+        Dim row As DataRow = rowView.Row
+        row("track_id") = dataGridViewRow.Cells("track_id").Value
+        row("track_name") = dataGridViewRow.Cells("track_name").Value
+        row("track_artist") = dataGridViewRow.Cells("track_artist").Value
+        row("track_popularity") = dataGridViewRow.Cells("track_popularity").Value
+        row("track_album_id") = dataGridViewRow.Cells("track_album_id").Value
+        row("track_album_name") = dataGridViewRow.Cells("track_album_name").Value
+        row("track_album_release_date") = dataGridViewRow.Cells("track_album_release_date").Value
+        row("playlist_name") = dataGridViewRow.Cells("playlist_name").Value
+        row("playlist_id") = dataGridViewRow.Cells("playlist_id").Value
+        row("playlist_genre") = dataGridViewRow.Cells("playlist_genre").Value
+        row("playlist_subgenre") = dataGridViewRow.Cells("playlist_subgenre").Value
+        row("danceability") = dataGridViewRow.Cells("danceability").Value
+        row("energy") = dataGridViewRow.Cells("energy").Value
+        row("key") = dataGridViewRow.Cells("key").Value
+        row("loudness") = dataGridViewRow.Cells("loudness").Value
+        row("mode") = dataGridViewRow.Cells("mode").Value
+        row("speechiness") = dataGridViewRow.Cells("speechiness").Value
+        row("acousticness") = dataGridViewRow.Cells("acousticness").Value
+        row("instrumentalness") = dataGridViewRow.Cells("instrumentalness").Value
+        row("liveness") = dataGridViewRow.Cells("liveness").Value
+        row("valence") = dataGridViewRow.Cells("valence").Value
+        row("tempo") = dataGridViewRow.Cells("tempo").Value
+        row("duration_ms") = dataGridViewRow.Cells("duration_ms").Value
+    End Sub
 
 
 End Namespace
